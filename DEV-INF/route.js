@@ -2,6 +2,7 @@ var request = require('request')
 var fs = require('fs')
 var path = require('path')
 var fs = require('fs');
+var opn = require('opn')
 var mkdirp = require('mkdirp');
 var domain = 'http://h5.test.sale.lemobar.cn'
 var url
@@ -11,6 +12,8 @@ var dir = path.join(process.cwd(),'./images');
 
 var type = ''
 var date = ''
+var start = 0
+var end = 0
 
 //创建目录
 mkdirp(dir, function (err) {
@@ -48,13 +51,14 @@ module.exports = function(app){
 					//console.log(val.pic_url1)
 					for(var n=1;n<10;n++){
 						if(val['pic_url'+n] != 'null'){
-							console.log(baseDir)
-							console.log(val.area + n + '.jpg')
+							//console.log(baseDir)
+							//console.log(val.area + n + '.jpg')
 							if (type == '/巡场签到'){
 								var nowDir = path.join(baseDir, '/' + val.area + date)
 							}else{
 								var nowDir = path.join(baseDir, '/' + val.area + date, '/' + val.device_id)
 							}
+							start += 1
 							//var nowDir = path.join(baseDir,'/'+val.area+date,'/'+val.device_id)
 							download(val['pic_url' + n], nowDir, n+'.jpg')
 						}
@@ -74,7 +78,23 @@ var download = function (url, dir, filename) {
 			if (err) {
 				console.log(err);
 			}
-			request(url).pipe(fs.createWriteStream(dir + "/" + filename));
+			
+			request(url).pipe(fs.createWriteStream(dir + "/" + filename).on('finish',function(){
+				end += 1
+				console.log(start,end)
+				if(end == start){
+					console.log('图片下载完成！')
+					opn(baseDir)
+					// fs.open(baseDir, 'r', (err, fd) => {
+					// 	if (err) throw err;
+					// 	fs.close(fd, (err) => {
+					// 		if (err) throw err;
+					// 	});
+					// });
+					end = 0
+					start = 0
+				}
+			}));
 		});
 		
 	});

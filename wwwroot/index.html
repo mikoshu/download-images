@@ -15,7 +15,7 @@
     $(document).ready(function(){
       //http://h5.test.sale.lemobar.cn/api/v1/queryServicingDemo?time=20180526+20180526
       $.ajax({
-        url: '/api/v1/queryCheckFixDemo?time=20180526+20180526',
+        url: '/api/v1/queryServicingDemo?time=20180526+20180526',
         success: function(data){
           console.log(data)
         }
@@ -26,6 +26,7 @@
           url: '/getImg',
           success: function (data) {
             console.log(data)
+            
           }
         })
       })
